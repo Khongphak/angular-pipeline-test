@@ -1,27 +1,27 @@
-# Use the Jenkins LTS image as the base
-FROM jenkins/jenkins:lts
+# Use Node.js 16.18.0 as the base image
+FROM node:16.18.0 AS build
 
-# Switch to root user to install additional software
-USER root
+# Set working directory
+WORKDIR /app
 
-# Update packages and install Node.js, npm, and other dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg \
-    && curl -sL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g @angular/cli \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Copy package.json and package-lock.json first to leverage Docker cache
+COPY package.json package-lock.json ./
 
-# Create a directory for Jenkins to store workspace and pipelines
-RUN mkdir -p /var/jenkins_home/workspace
+# Install Angular CLI globally
+RUN npm install -g @angular/cli@15.1.6
 
-# Set permissions for Jenkins user
-RUN chown -R jenkins:jenkins /var/jenkins_home
+# Install project dependencies
+RUN npm install
 
-# Switch back to Jenkins user
-USER jenkins
+# Copy the rest of the application
+COPY . .
 
-# Expose Jenkins default port
+# Build the Angular project
+RUN ng build --prod
+
+# Serve the app using a simple HTTP server
+RUN npm install -g http-server
+CMD ["http-server", "dist/"]
+
+# Expose the port the app will run on
 EXPOSE 8080
