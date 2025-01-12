@@ -7,7 +7,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'github-credential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')])
                 script{
                     if(!fileExists('angular-pipeline-test')){
-                        sh 'git clone https://$USERNAME:$PASSWORDgithub.com/Khongphak/angular-pipeline-test.git'
+                        sh 'git clone https://$USERNAME:$PASSWORD@github.com/Khongphak/angular-pipeline-test.git'
                     }else{
                         dir('angular-pipeline-test'){
                             sh 'git pull'
