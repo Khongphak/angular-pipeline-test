@@ -4,16 +4,17 @@ pipeline {
     stages{
         stage('========== check out =========='){
             steps{
-                withCredentials([usernamePassword(credentialsId: 'github-credential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')])
-                script{
-                    if(!fileExists('angular-pipeline-test')){
-                        sh 'git clone https://$USERNAME:$PASSWORD@github.com/Khongphak/angular-pipeline-test.git'
-                    }else{
-                        dir('angular-pipeline-test'){
-                            sh 'git pull'
+                withCredentials([usernamePassword(credentialsId: 'github-credential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                    script{
+                        if(!fileExists('angular-pipeline-test')){
+                            sh 'git clone https://$USERNAME:$PASSWORD@github.com/Khongphak/angular-pipeline-test.git'
+                        } else {
+                            dir('angular-pipeline-test'){
+                                sh 'git pull'
+                            }
                         }
                     }
-                }
+                } 
             }
         }
         // stage('========== build docker image ==========')
