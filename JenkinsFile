@@ -1,4 +1,3 @@
-// Personal Access token -> github_credentials: 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
 pipeline {
     agent any
     stages{
