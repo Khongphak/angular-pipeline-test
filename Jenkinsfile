@@ -38,7 +38,15 @@ pipeline {
                 }
             }
         }
-        // stage('========== copy .tar file to destination server ==========')
+        stage('========== copy .tar file to destination server =========='){
+            steps {
+                script {
+                    sh '''
+                        sshpass -p Legeneration_01 scp -o StrictHostKeyChecking=no /my-test-images/angular-pipeline-test-client.tar root@116.206.127.166:/srv/client-angular-pipeline-test
+                    '''
+                }
+            }
+        }
         // stage('========== Deploy app by using docker ==========')
     }
 }
