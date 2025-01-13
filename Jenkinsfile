@@ -33,7 +33,7 @@ pipeline {
                     sh '''
                         docker --version
                         mkdir -p my-test-images
-                        docker save -o /my-test-images/angular-pipeline-test-client.tar develop/angular-pipeline-test-client:latest
+                        docker save -o angular-pipeline-test-client.tar develop/angular-pipeline-test-client:latest
                     '''
                 }
             }
