@@ -1,27 +1,13 @@
-# Use the Jenkins LTS image as the base
-FROM jenkins/jenkins:lts
+FROM node:20 AS build
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm install
+COPY . .
+RUN npm run build
 
-# Switch to root user to install additional software
-USER root
+FROM nginx:1.25-alpine
+COPY --from=build /app/dist/angular-pipeline-test/ /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Update packages and install Node.js, npm, and other dependencies
-RUN apt-get update && apt-get install -y \
-    curl \
-    gnupg \
-    && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install -g @angular/cli@15.1.6 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create a directory for Jenkins to store workspace and pipelines
-RUN mkdir -p /var/jenkins_home/workspace
-
-# Set permissions for Jenkins user
-RUN chown -R jenkins:jenkins /var/jenkins_home
-
-# Switch back to Jenkins user
-USER jenkins
-
-# Expose Jenkins default port
-EXPOSE 8080
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

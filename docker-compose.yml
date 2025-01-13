@@ -1,0 +1,19 @@
+services:
+  angular-pipeline-test:
+    image: develop/angular-pipeline-test-client  # Add version tagging
+    container_name: angular-pipeline-test-client
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8089:80"
+    volumes:
+      - ./client/logs:/var/log/nginx
+    restart: always
+    networks:
+      - angular-pipeline-test-network
+  
+networks:
+  angular-pipeline-test-network:
+    name: angular-pipeline-test-network
+    driver: bridge
