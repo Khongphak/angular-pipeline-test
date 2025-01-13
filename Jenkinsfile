@@ -17,7 +17,16 @@ pipeline {
                 } 
             }
         }
-        // stage('========== build docker image ==========')
+        stage('========== build docker image =========='){
+            steps {
+                script {
+                    sh '''
+                        cd angular-pipeline-test
+                        docker-compose build angular-pipeline-test
+                    '''
+                }
+            }
+        }
         // stage('========== save docker image to .tar file ==========')
         // stage('========== copy .tar file to destination server ==========')
         // stage('========== Deploy app by using docker ==========')
