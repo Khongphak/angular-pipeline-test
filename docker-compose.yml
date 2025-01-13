@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8089:80"
+      - "8088:80"
     volumes:
       - ./client/logs:/var/log/nginx
     restart: always
