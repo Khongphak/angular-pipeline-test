@@ -27,7 +27,17 @@ pipeline {
                 }
             }
         }
-        // stage('========== save docker image to .tar file ==========')
+        stage('========== save docker image to .tar file =========='){
+            steps {
+                script {
+                    sh '''
+                        docker --version
+                        mkdir -p /my-test-images
+                        docker save -o /my-test-images/angular-pipeline-test-client.tar develop/angular-pipeline-test-client:latest
+                    '''
+                }
+            }
+        }
         // stage('========== copy .tar file to destination server ==========')
         // stage('========== Deploy app by using docker ==========')
     }
