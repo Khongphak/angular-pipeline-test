@@ -33,7 +33,7 @@ pipeline {
                     sh '''
                         docker --version
                         mkdir -p my-test-images
-                        docker save -o my-test-images/angular-pipeline-test-client.tar develop/angular-pipeline-test-client:latest
+                        docker save -o my-test-images/angular-pipeline-test-client.tar develop/angular-pipeline-test-client
                     '''
                 }
             }
@@ -53,13 +53,14 @@ pipeline {
                 script {
                     sh '''
                         sshpass -p 'Legeneration_01' ssh -o StrictHostKeyChecking=no root@116.206.127.166 << EOF
+                        docker rm -f angular-pipeline-test-client
+                        docker rmi -f develop/angular-pipeline-test-client:latest
                         echo 'Navigating to directory containing the .tar file'
                         cd /srv/client-angular-pipeline-test
-                        echo 'Loading Docker image from .tar file'
+                        echo 'Loading Docker image from .tar file...'
                         docker load < angular-pipeline-test-client.tar
-                        docker rm -f angular-pipeline-test-client || true
-                        docker rmi -f develop/angular-pipeline-test-client || true
-                        docker run -d --name angular-pipeline-test-client -p 80:80 develop/angular-pipeline-test-client
+                        echo 'Starting container...'
+                        docker run -d --name develop/angular-pipeline-test-client -p 80:80 develop/angular-pipeline-test-client
                         EOF
                     '''
                 }
