@@ -48,6 +48,19 @@ pipeline {
                 }
             }
         }
-        // stage('========== Deploy app by using docker ==========')
+        stage('========== Deploy app by using docker =========='){
+            steps{
+                script {
+                    sh '''
+                        sshpass -p 'Legeneration_01' ssh -o StrictHostKeyChecking=no root@116.206.127.166
+                        echo 'Loading Docker image from .tar file'
+                        docker load < /srv/client-angular-pipeline-test/angular-pipeline-test-client.tar
+                        docker rm -f angular-pipeline-test-client
+                        docker rmi -f develop/angular-pipeline-test-client
+                        docker run -d --name angular-pipeline-test-client -p 80:80 develop/angular-pipeline-test-client
+                    '''
+                }
+            }
+        }
     }
 }
