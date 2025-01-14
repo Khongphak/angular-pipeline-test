@@ -1,23 +1,23 @@
 // Personal Access token -> github_credentials: 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
 pipeline {
     agent any
-    stages{
-        stage('========== check out =========='){
-            steps{
-                withCredentials([usernamePassword(credentialsId: 'github-credential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-                    script{
-                        if(!fileExists('angular-pipeline-test')){
+    stages {
+        stage('========== check out ==========') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'github-credential', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    script {
+                        if (!fileExists('angular-pipeline-test')) {
                             sh 'git clone https://$USERNAME:$PASSWORD@github.com/Khongphak/angular-pipeline-test.git'
                         } else {
-                            dir('angular-pipeline-test'){
+                            dir('angular-pipeline-test') {
                                 sh 'git pull'
                             }
                         }
                     }
-                } 
+                }
             }
         }
-        stage('========== build docker image =========='){
+        stage('========== build docker image ==========') {
             steps {
                 script {
                     sh '''
@@ -27,7 +27,7 @@ pipeline {
                 }
             }
         }
-        stage('========== save docker image to .tar file =========='){
+        stage('========== save docker image to .tar file ==========') {
             steps {
                 script {
                     sh '''
@@ -38,7 +38,7 @@ pipeline {
                 }
             }
         }
-        stage('========== copy .tar file to destination server =========='){
+        stage('========== copy .tar file to destination server ==========') {
             steps {
                 script {
                     // sshpass -p Legeneration_01 scp -o StrictHostKeyChecking=no /my-test-images/angular-pipeline-test-client.tar root@116.206.127.166:/srv/client-angular-pipeline-test
@@ -48,16 +48,19 @@ pipeline {
                 }
             }
         }
-        stage('========== Deploy app by using docker =========='){
-            steps{
+        stage('========== Deploy app by using docker ==========') {
+            steps {
                 script {
                     sh '''
-                        sshpass -p 'Legeneration_01' ssh -o StrictHostKeyChecking=no root@116.206.127.166
+                        sshpass -p 'Legeneration_01' ssh -o StrictHostKeyChecking=no root@116.206.127.166 << EOF
+                        echo 'Navigating to directory containing the .tar file'
+                        cd /srv/client-angular-pipeline-test
                         echo 'Loading Docker image from .tar file'
-                        docker load < srv/client-angular-pipeline-test/angular-pipeline-test-client.tar
-                        docker rm -f angular-pipeline-test-client
-                        docker rmi -f develop/angular-pipeline-test-client
+                        docker load < angular-pipeline-test-client.tar
+                        docker rm -f angular-pipeline-test-client || true
+                        docker rmi -f develop/angular-pipeline-test-client || true
                         docker run -d --name angular-pipeline-test-client -p 80:80 develop/angular-pipeline-test-client
+                        EOF
                     '''
                 }
             }
