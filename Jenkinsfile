@@ -33,7 +33,7 @@ pipeline {
                     sh '''
                         docker --version
                         mkdir -p my-test-images
-                        docker save -o angular-pipeline-test-client.tar develop/angular-pipeline-test-client:latest
+                        docker save -o my-test-images/angular-pipeline-test-client.tar develop/angular-pipeline-test-client:latest
                     '''
                 }
             }
@@ -43,7 +43,7 @@ pipeline {
                 script {
                     // sshpass -p Legeneration_01 scp -o StrictHostKeyChecking=no /my-test-images/angular-pipeline-test-client.tar root@116.206.127.166:/srv/client-angular-pipeline-test
                     sh '''
-                        sshpass -p 'Legeneration_01' scp -o StrictHostKeyChecking=no angular-pipeline-test-client.tar root@116.206.127.166:/srv/client-angular-pipeline-test
+                        sshpass -p 'Legeneration_01' scp -o StrictHostKeyChecking=no my-test-images/angular-pipeline-test-client.tar root@116.206.127.166:/srv/client-angular-pipeline-test
                     '''
                 }
             }
