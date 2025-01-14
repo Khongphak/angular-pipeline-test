@@ -60,7 +60,7 @@ pipeline {
                         echo 'Loading Docker image from .tar file...'
                         docker load < angular-pipeline-test-client.tar
                         echo 'Starting container...'
-                        docker run -d --name develop/angular-pipeline-test-client -p 80:80 develop/angular-pipeline-test-client
+                        docker run -d --name angular-pipeline-test-client -p 80:80 develop/angular-pipeline-test-client
                         EOF
                     '''
                 }
